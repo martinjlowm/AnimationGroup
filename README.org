@@ -1,0 +1,4 @@
+#+TITLE: AnimationGroup -- Animations for WoW 1.12
+
+AnimationGroup is an attempt to port animation groups known from retail World of
+Warcraft to 1.12.
