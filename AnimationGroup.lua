@@ -42,20 +42,7 @@ do
             return _CreateFrame(frame_type, name, parent, template)
         end
     end
-
-    function AnimationGroup:Create()
-        self:Bind(CreateFrame('Frame'))
-
-
-        self.playing = nil
-
-        return self
-    end
 end
-
-
-
-
 
 function LibAG:New(name, module)
     self[name] = module or Classy:New('Frame')
