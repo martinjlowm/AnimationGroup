@@ -4,9 +4,10 @@ local AnimationGroup = LibAG:New('AnimationGroup')
 AnimationGroup.loop_type = nil
 AnimationGroup.loop_state = nil
 AnimationGroup.duration = nil
-AnimationGroup.is_playing = nil
-AnimationGroup.is_paused = nil
+AnimationGroup.playing = nil
+AnimationGroup.paused = nil
 AnimationGroup.done = nil
+AnimationGroup.animations = {}
 
 function AnimationGroup:Play()
     for _, animation in next, self.animations do
@@ -27,10 +28,21 @@ function AnimationGroup:Stop()
 end
 
 function AnimationGroup:Finish()
+
 end
 
 function AnimationGroup:GetProgress()
+    local lowest_progress = 1
+    local anim_progress
 
+    for _, animation in next, self.animations do
+        anim_progress = animation.progress
+        if anim_progress < lowest_progress then
+            lowest_progress = anim_progress
+        end
+    end
+
+    return lowest_progress
 end
 
 function AnimationGroup:IsDone()
@@ -38,11 +50,11 @@ function AnimationGroup:IsDone()
 end
 
 function AnimationGroup:IsPlaying()
-    return self.is_playing
+    return self.playing
 end
 
 function AnimationGroup:IsPaused()
-    return self.is_playing and self.is_paused
+    return self.playing and self.paused
 end
 
 function AnimationGroup:GetDuration()
@@ -62,8 +74,16 @@ function AnimationGroup:GetLoopState()
 end
 
 function AnimationGroup:CreateAnimation(animation_type, name, inherits_from)
-    local animation = self['Animation'].Bind(CreateFrame('Frame', name))
+    local animation = LibAG[animation_type]:Bind(CreateFrame('Frame', name))
+
+    local parent = self:GetParent()
     animation.__owner = self
+    animation.type = animation_type
+    animation.parent_width = parent:GetWidth()
+    animation.parent_height = parent:GetHeight()
+    animation.parent_x, animation.parent_y = select(4, parent:GetPoint())
+
     table.insert(self.animations, animation)
 
+    return animation
 end
