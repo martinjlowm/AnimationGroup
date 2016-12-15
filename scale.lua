@@ -1,13 +1,16 @@
 if not LibAG then return end
 
 local Scale = LibAG:New('Scale', LibAG.Animation)
-Scale.origin = {}
-Scale.origin.point = nil
-Scale.origin.x = nil
-Scale.origin.y = nil
-Scale.scale = {}
-Scale.scale.x = nil
-Scale.scale.y = nil
+
+function Scale:__Initialize()
+    self.origin = {}
+    self.origin.point = nil
+    self.origin.x = nil
+    self.origin.y = nil
+    self.scale = {}
+    self.scale.x = nil
+    self.scale.y = nil
+end
 
 function Scale:SetOrigin(point, offset_x, offset_y)
     self.origin.point = point
@@ -22,6 +25,9 @@ function Scale:GetOrigin()
 end
 
 function Scale:SetScale(x, y)
+    assert(x > 0, 'x must be greater than 0!')
+    assert(y > 0, 'y must be greater than 0!')
+
     self.scale.x = x
     self.scale.y = y
 end
@@ -33,9 +39,15 @@ function Scale:GetScale()
 end
 
 function Scale:OnUpdate(elapsed)
+    local properties = self.group.properties
+
     self.progress = self.smoothing_func(self.time / self.duration).y
 
-    local frame = self:GetRegionParent()
-    frame:SetWidth(self.parent_width + self.progress * (self.parent_width * self.scale.x))
-    frame:SetHeight(self.parent_height + self.progress * (self.parent_height * self.scale.y))
+    local frame = self.group.parent
+
+    local sign_x = self.scale.x < 1 and -1 or 1
+    local sign_y = self.scale.y < 1 and -1 or 1
+
+    frame:SetWidth(properties.width + sign_x * self.progress * (properties.width * self.scale.x))
+    frame:SetHeight(properties.height + sign_y * self.progress * (properties.height * self.scale.y))
 end

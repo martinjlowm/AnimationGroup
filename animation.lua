@@ -1,56 +1,45 @@
 if not LibAG then return end
 
 local Animation = LibAG:New('Animation')
-Animation.type = nil
-Animation.duration = nil
-Animation.progress = nil
-Animation.smoothing_type = 'LINEAR'
-Animation.smoothing_func = LibAG.Curves[Animation.smoothing_type]
 
 local function OnUpdate(self, elapsed)
     if self.paused then
         return
     end
 
-    self.time = self.time + (self.reverse and -elapsed or elapsed)
+    self.time = self.time + (self.group.reverse and -elapsed or elapsed)
 
-    if self.time > self.duration or (self.reverse and self.time < 0) then
-        if self.__owner.loop_type == 'NONE' then
-            self:Stop()
-            -- Send OnFinished
-            return
-        elseif self.__owner.loop_type == 'BOUNCE' then
-            self.reverse = not self.reverse
-        end
-        self.time = self.reverse and self.duration or 0
+    if self.time > self.duration or (self.group.reverse and self.time < 0) then
+        self:__Finished()
+        return
     end
 
-    self:OnUpdate(elapsed)
+    -- Temporary until all animation types are implemented
+    if self.OnUpdate then
+        self:OnUpdate(elapsed)
+    end
 end
+
+
+--[[
+    API
+--]]
 
 function Animation:Play()
-    if self.OnUpdate and not self.playing then
-        self.progress = 0
-        self.time = 0
-        self.playing = true
-        self:SetScript('OnUpdate', function() OnUpdate(this, arg1) end)
-    end
-
-    self.paused = false
+    self:__Play()
+    self.group:__Notify(self, 'Play')
 end
+
 
 function Animation:Pause()
-    self.paused = true
+    self.__Pause()
+    self.group:__Notify(self, 'Pause')
 end
 
-function Animation:Stop()
-    if self.OnUpdate then
-        self.progress = 0
-        self.time = 0
-        self:SetScript('OnUpdate', nil)
-    end
 
-    self.playing = false
+function Animation:Stop()
+    self.__Stop()
+    self.group:__Notify(self, 'Stop')
 end
 
 function Animation:IsDone()
@@ -116,9 +105,11 @@ function Animation:GetMaxFramerate()
 end
 
 function Animation:SetOrder(order)
+    self.order = order
 end
 
 function Animation:GetOrder()
+    return self.order
 end
 
 function Animation:SetSmoothing(smoothing_type)
@@ -131,5 +122,47 @@ function Animation:GetSmoothing()
 end
 
 function Animation:GetRegionParent()
-    return self.__owner:GetParent()
+    return self.group.parent
+end
+
+
+--[[
+    Private
+--]]
+
+function Animation:__SetScript(handler, func)
+    if self.handlers[handler] then
+        self.handlers[handler] = func
+    else
+        self:_SetScript(handler, func)
+    end
+end
+
+function Animation:__Finished()
+    self:__Stop()
+    self.group:__Notify(self, 'Finished')
+end
+
+function Animation:__Pause()
+    self.paused = true
+end
+
+function Animation:__Play()
+    if not self.playing and self.group.parent:IsVisible() then
+        self.time = self.group.reverse and self.duration or 0
+        self.playing = true
+        self:SetScript('OnUpdate', function() OnUpdate(this, arg1) end)
+    end
+
+    self.paused = false
+end
+
+function Animation:__Stop()
+    self.time = 0
+
+    if self.OnUpdate then
+        self:SetScript('OnUpdate', nil)
+    end
+
+    self.playing = false
 end

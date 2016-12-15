@@ -14,43 +14,20 @@ end
 local Region = LibAG:New('Region')
 
 function Region:CreateAnimationGroup(name, inherits_from)
-    local ag = LibAG.AnimationGroup:Bind(CreateFrame('Frame', nil))
-    ag:SetParent(self)
+    local ag = LibAG.AnimationGroup:Bind(CreateFrame('Frame'))
+
+    ag:__Initialize(self)
+
     return ag
 end
 
-do
-    local animation_handlers = {
-        ['OnLoad'] = {},
-        ['OnPlay'] = {},
-        ['OnPaused'] = {},
-        ['OnStop'] = {},
-        ['OnFinished'] = {}
-    }
+local _CreateFrame = CreateFrame
+function CreateFrame(...)
+    local frame = _CreateFrame(unpack(arg))
 
-    local _SetScript
-
-    local function SetScript(self, handler, func)
-        if animation_handlers[handler] then
-            table.insert(animation_handlers[handler], { self, func })
-        else
-            _SetScript(self, handler, func)
-        end
+    frame.CreateAnimationGroup = function()
+        return LibAG.Region.CreateAnimationGroup(frame, nil, nil)
     end
 
-    local _CreateFrame = CreateFrame
-    function CreateFrame(...)
-        local frame = _CreateFrame(unpack(arg))
-
-        if not _SetScript then
-            _SetScript = frame.SetScript
-        end
-
-        frame.SetScript = SetScript
-        frame.CreateAnimationGroup = function()
-            return LibAG.Region.CreateAnimationGroup(frame, nil, nil)
-        end
-
-        return frame
-    end
+    return frame
 end

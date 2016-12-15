@@ -5,18 +5,17 @@ local cos = math.cos
 local pi = math.pi
 
 local Rotation = LibAG:New('Rotation', LibAG.Animation)
-Rotation.radians = nil
-Rotation.origin = {}
-Rotation.origin.point = 'CENTER'
-Rotation.origin.x = 0
-Rotation.origin.y = 0
+
+function Rotation:__Initialize()
+    self.radians = nil
+    self.origin = {}
+    self.origin.point = 'CENTER'
+    self.origin.x = 0
+    self.origin.y = 0
+end
 
 local GetRegions = function(self)
-    local regions = { self:GetRegionParent():GetRegions() }
-
-    GetRegions = function() return regions end
-
-    return regions
+    return { self.group.parent:GetRegions() }
 end
 
 local anchor_coords = {
@@ -42,11 +41,13 @@ local function GetCoords(self, progress)
     local _cos = cos(rad)
     local _sin = sin(rad)
 
+    local properties = self.group.properties
+
     local origin = {
         x = anchor_coords[self.origin.point].x +
-            self.origin.x / self:GetRegionParent():GetWidth(),
+            self.origin.x / properties.width,
         y = anchor_coords[self.origin.point].y +
-            self.origin.y / self:GetRegionParent():GetHeight()
+            self.origin.y / properties.height
     }
 
     local i = 1

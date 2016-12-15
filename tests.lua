@@ -26,7 +26,7 @@ local TranslationScaleRotationAlphaAnimation = function()
     translation:SetSmoothing('OUT')
 
     local scale = ag:CreateAnimation('Scale')
-    scale:SetScale(0.5, 0.5)
+    scale:SetScale(.5, .5)
     scale:SetDuration(1)
     scale:SetSmoothing('OUT')
 
@@ -36,13 +36,37 @@ local TranslationScaleRotationAlphaAnimation = function()
     rotation:SetSmoothing('INOUT')
 
     local alpha = ag:CreateAnimation('Alpha')
-    alpha:SetChange(-0.5)
+    alpha:SetChange(-0.9)
     alpha:SetDuration(3)
     alpha:SetSmoothing('OUT')
 
     ag:Play()
 end
 table.insert(tests, TranslationScaleRotationAlphaAnimation)
+
+local NewScaleAnimation = function()
+    local frame = CreateFrame('Frame')
+    frame:SetPoint('CENTER', UIParent, 'CENTER', -200, 0)
+    frame:SetWidth(64)
+    frame:SetHeight(64)
+
+    local tex = frame:CreateTexture('ARTWORK')
+    tex:SetAllPoints(frame)
+    tex:SetBlendMode('ADD')
+    tex:SetTexture('Interface\\Icons\\INV_Misc_Pelt_Bear_Ruin_02')
+    frame:Show()
+
+    local ag = frame:CreateAnimationGroup()
+    ag:SetLooping('BOUNCE')
+
+    local scale = ag:CreateAnimation('Scale')
+    scale:SetScale(1.5, 1.5)
+    scale:SetDuration(2.5)
+    scale:SetSmoothing('OUT')
+
+    ag:Play()
+end
+table.insert(tests, NewScaleAnimation)
 
 local function OnEvent()
     for _, test in next, tests do
