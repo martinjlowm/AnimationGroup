@@ -28,9 +28,6 @@ function Scale:GetOrigin()
 end
 
 function Scale:SetScale(x, y)
-    assert(x > 0, 'x must be greater than 0!')
-    assert(y > 0, 'y must be greater than 0!')
-
     self.scale.x = x
     self.scale.y = y
 end
@@ -48,9 +45,6 @@ function Scale:OnUpdate(elapsed)
 
     local frame = self.group.parent
 
-    local sign_x = self.scale.x < 1 and -1 or 1
-    local sign_y = self.scale.y < 1 and -1 or 1
-
-    frame:SetWidth(properties.width + sign_x * self.progress * (properties.width * self.scale.x))
-    frame:SetHeight(properties.height + sign_y * self.progress * (properties.height * self.scale.y))
+    frame:SetWidth(properties.width + self.progress * (properties.width * self.scale.x))
+    frame:SetHeight(properties.height + self.progress * (properties.height * self.scale.y))
 end
