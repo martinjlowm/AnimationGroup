@@ -10,6 +10,11 @@ local AnimationGroup = AG:New('AnimationGroup')
 --]]
 
 function AnimationGroup:Play()
+    self.properties.alpha = self.parent:GetAlpha()
+    self.properties.width = self.parent:GetWidth()
+    self.properties.height = self.parent:GetHeight()
+    self.properties.x, self.properties.y = select(4, self.parent:GetPoint())
+
     self.reverse = false
     self.finishing = false
 
@@ -151,11 +156,6 @@ function AnimationGroup:__Initialize(parent)
                               self.properties.width = self.properties.width or this:GetWidth()
                               self.properties.height = self.properties.height or this:GetHeight()
     end)
-
-    self.properties.alpha = self.parent:GetAlpha()
-    self.properties.width = self.parent:GetWidth()
-    self.properties.height = self.parent:GetHeight()
-    self.properties.x, self.properties.y = select(4, self.parent:GetPoint())
 
     self._SetScript = self.SetScript
     self.SetScript = self.__SetScript
