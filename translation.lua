@@ -1,9 +1,9 @@
 if not LibStub then return end
 
-local LibAG = LibStub:GetLibrary('AnimationGroup-1.0')
-if not LibAG then return end
+local AG = LibStub:GetLibrary('AnimationGroup-1.0')
+if not AG then return end
 
-local Translation = LibAG:New('Translation', LibAG.Animation)
+local Translation = AG:New('Translation', AG.Animation)
 
 function Translation:__Initialize()
     self.offset = {}

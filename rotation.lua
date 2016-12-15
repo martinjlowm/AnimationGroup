@@ -1,13 +1,13 @@
 if not LibStub then return end
 
-local LibAG = LibStub:GetLibrary('AnimationGroup-1.0')
-if not LibAG then return end
+local AG = LibStub:GetLibrary('AnimationGroup-1.0')
+if not AG then return end
 
 local sin = math.sin
 local cos = math.cos
 local pi = math.pi
 
-local Rotation = LibAG:New('Rotation', LibAG.Animation)
+local Rotation = AG:New('Rotation', AG.Animation)
 
 function Rotation:__Initialize()
     self.radians = nil

@@ -1,9 +1,9 @@
 if not LibStub then return end
 
-local LibAG = LibStub:GetLibrary('AnimationGroup-1.0')
-if not LibAG then return end
+local AG = LibStub:GetLibrary('AnimationGroup-1.0')
+if not AG then return end
 
-local Path = LibAG:New('Path', LibAG.Animation)
+local Path = AG:New('Path', AG.Animation)
 Path.curve_type = nil
 Path.control_points = {}
 

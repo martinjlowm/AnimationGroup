@@ -1,10 +1,10 @@
 if not LibStub then return end
 
-local LibAG = LibStub:GetLibrary('AnimationGroup-1.0')
-if not LibAG then return end
+local AG = LibStub:GetLibrary('AnimationGroup-1.0')
+if not AG then return end
 
 
-local Alpha = LibAG:New('Alpha', LibAG.Animation)
+local Alpha = AG:New('Alpha', AG.Animation)
 
 function Alpha:__Initialize()
     self.alpha_change = nil

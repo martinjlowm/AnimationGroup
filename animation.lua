@@ -1,9 +1,9 @@
 if not LibStub then return end
 
-local LibAG = LibStub:GetLibrary('AnimationGroup-1.0')
-if not LibAG then return end
+local AG = LibStub:GetLibrary('AnimationGroup-1.0')
+if not AG then return end
 
-local Animation = LibAG:New('Animation')
+local Animation = AG:New('Animation')
 
 local function OnUpdate(self, elapsed)
     if self.paused then
@@ -116,7 +116,7 @@ function Animation:GetOrder()
 end
 
 function Animation:SetSmoothing(smoothing_type)
-    self.smoothing_func = LibAG.Curves[smoothing_type]
+    self.smoothing_func = AG.Curves[smoothing_type]
     self.smoothing_type = smoothing_type
 end
 

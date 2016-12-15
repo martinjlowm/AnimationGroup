@@ -1,9 +1,9 @@
 if not LibStub then return end
 
-local LibAG = LibStub:GetLibrary('AnimationGroup-1.0')
-if not LibAG then return end
+local AG = LibStub:GetLibrary('AnimationGroup-1.0')
+if not AG then return end
 
-local AnimationGroup = LibAG:New('AnimationGroup')
+local AnimationGroup = AG:New('AnimationGroup')
 
 --[[
     API
@@ -81,7 +81,7 @@ function AnimationGroup:GetLoopState()
 end
 
 function AnimationGroup:CreateAnimation(animation_type, name, inherits_from)
-    local animation = LibAG[animation_type]:Bind(CreateFrame('Frame', name))
+    local animation = AG[animation_type]:Bind(CreateFrame('Frame', name))
 
     animation.group = self
     animation:SetParent(self)
@@ -98,7 +98,7 @@ function AnimationGroup:CreateAnimation(animation_type, name, inherits_from)
 
     local default_smoothing = 'LINEAR'
     animation.smoothing_type = default_smoothing
-    animation.smoothing_func = LibAG.Curves[default_smoothing]
+    animation.smoothing_func = AG.Curves[default_smoothing]
 
     if animation.__Initialize then
         animation:__Initialize()

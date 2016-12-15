@@ -1,6 +1,6 @@
 [submodule "libs/Sol"]
 	path = libs/Sol
-	url = git@github.com:martinjlowm/Sol.git
+	url = https://github.com/martinjlowm/Sol.git
 [submodule "libs/LibStub"]
 	path = libs/LibStub
-	url = git@github.com:martinjlowm/LibStub.git
+	url = https://github.com/martinjlowm/LibStub.git
