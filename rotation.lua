@@ -1,3 +1,6 @@
+if not LibStub then return end
+
+local LibAG = LibStub:GetLibrary('AnimationGroup-1.0')
 if not LibAG then return end
 
 local sin = math.sin

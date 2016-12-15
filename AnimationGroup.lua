@@ -1,9 +1,9 @@
 if not LibStub then return end
 
-local Classy = LibStub('Classy-1.0')
-
-LibAG = LibStub:NewLibrary('AnimationGroup-1.0', 0)
+local LibAG = LibStub:NewLibrary('AnimationGroup-1.0', 0)
 if not LibAG then return end
+
+local Classy = LibStub('Classy-1.0')
 
 function LibAG:New(name, parent)
     self[name] = Classy:New('Frame', parent)
