@@ -40,7 +40,7 @@ local frame_corners = {
 }
 local corners = { 0, 0, 0, 0, 0, 0, 0, 0 }
 local function GetCoords(self, progress)
-    local rad = self.radians + 2 * pi * progress
+    local rad = self.radians * progress
     local _cos = cos(rad)
     local _sin = sin(rad)
 
