@@ -73,7 +73,7 @@ table.insert(tests, NewScaleAnimation)
 
 local OrderAnimations = function()
     frame:ClearAllPoints()
-    frame:SetPoint('CENTER', UIParent, 'CENTER', -250, 0)
+    frame:SetPoint('CENTER', UIParent, 'CENTER', -150, 0)
 
     tex:SetTexture('Interface\\Icons\\Spell_Holy_InnerFire')
 
@@ -90,7 +90,7 @@ local OrderAnimations = function()
     rotation:SetOrder(1)
 
     local alpha = ag:CreateAnimation('Alpha')
-    alpha:SetChange(0.5)
+    alpha:SetChange(-0.5)
     alpha:SetDuration(1)
     alpha:SetSmoothing('OUT')
     alpha:SetOrder(2)

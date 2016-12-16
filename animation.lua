@@ -108,6 +108,12 @@ function Animation:GetMaxFramerate()
 end
 
 function Animation:SetOrder(order)
+    assert(order <= 10, 'How much memory do you have, bro?'
+               .. ' (only 10 orders are supported)')
+    assert(order >= 0, 'Negative orders are not supported!')
+
+    self.group:__MoveOrder(self, order)
+
     self.order = order
 end
 

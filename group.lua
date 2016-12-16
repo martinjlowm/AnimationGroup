@@ -5,25 +5,25 @@ if not AG then return end
 
 local AnimationGroup = AG:New('AnimationGroup')
 
+local ORDER_LIMIT = 10
+
 --[[
     API
 --]]
 
 function AnimationGroup:Play()
-    self.properties.alpha = self.parent:GetAlpha()
-    self.properties.width = self.parent:GetWidth()
-    self.properties.height = self.parent:GetHeight()
-    self.properties.x, self.properties.y = select(4, self.parent:GetPoint())
+    self:__UpdateProperties()
 
     self.reverse = false
     self.finishing = false
+    self.order = 0
 
     self:__Play()
     self:__Notify(nil, 'Play')
 end
 
 function AnimationGroup:Pause()
-    for _, animation in next, self.animations do
+    for _, animation in next, self.animations[self.order + 1] do
         animation:__Pause()
     end
 
@@ -31,7 +31,7 @@ function AnimationGroup:Pause()
 end
 
 function AnimationGroup:Stop()
-    for _, animation in next, self.animations do
+    for _, animation in next, self.animations[self.order + 1] do
         animation:__Stop()
     end
 
@@ -47,7 +47,7 @@ function AnimationGroup:GetProgress()
     local lowest_progress = 1
     local anim_progress
 
-    for _, animation in next, self.animations do
+    for _, animation in next, self.animations[self.order + 1] do
         anim_progress = animation.progress
         if anim_progress < lowest_progress then
             lowest_progress = anim_progress
@@ -112,7 +112,7 @@ function AnimationGroup:CreateAnimation(animation_type, name, inherits_from)
     animation._SetScript = animation.SetScript
     animation.SetScript = animation.__SetScript
 
-    table.insert(self.animations, animation)
+    table.insert(self.animations[1], animation)
 
     return animation
 end
@@ -142,7 +142,10 @@ function AnimationGroup:__Initialize(parent)
         ['OnFinished'] = true
     }
 
-    self.animations = {}
+    -- The original implementation claims to support up to 100 orders... yuck!
+    -- Lets keep it at 10 for sanity.
+    self.animations = { {}, {}, {}, {}, {}, {}, {}, {}, {}, {} }
+
     self.properties = {
         alpha = nil,
         width = nil,
@@ -169,13 +172,40 @@ function AnimationGroup:__SetScript(handler, func)
     end
 end
 
+function AnimationGroup:__UpdateProperties()
+    self.properties.alpha = self.parent:GetAlpha()
+    self.properties.width = self.parent:GetWidth()
+    self.properties.height = self.parent:GetHeight()
+    self.properties.x, self.properties.y = select(4, self.parent:GetPoint())
+end
+
 function AnimationGroup:__Play()
-    for _, animation in next, self.animations do
+    local animations = self.animations[self.order + 1]
+
+    if not animations or table.getn(animations) < 1 then
+        self.playing = false
+        return
+    end
+
+    for _, animation in next, animations do
         animation.finished = false
         animation:__Play()
     end
 
     self.playing = true
+end
+
+function AnimationGroup:__MoveOrder(animation, new_order)
+    for order, anims in next, self.animations do
+        for i, anim in next, anims do
+            if anim == animation then
+                self.animations[order][i] = nil
+            end
+        end
+    end
+
+    -- Zero-indexing, nope
+    table.insert(self.animations[new_order + 1], animation)
 end
 
 function AnimationGroup:__Notify(animation, signal)
@@ -193,7 +223,7 @@ function AnimationGroup:__Notify(animation, signal)
     if signal == 'Finished' then
         animation.finished = true
 
-        for _, anim in next, self.animations do
+        for _, anim in next, self.animations[self.order + 1] do
             all_finished = all_finished and anim.finished
         end
 
@@ -208,7 +238,7 @@ function AnimationGroup:__Notify(animation, signal)
 
         if not animation then
             local handler_func
-            for _, anim in next, self.animations do
+            for _, anim in next, self.animations[self.order + 1] do
                 handler_func = anim.handlers['On' .. signal]
                 if type(handler_func) == 'function' then
                     table.insert(func, {anim, handler_func})
@@ -228,15 +258,43 @@ function AnimationGroup:__Notify(animation, signal)
         end
     end
 
+    local shift
+
+    -- Try the remaining orders
+    if (signal == 'Finished' and all_finished) or signal == 'Bounce' then
+        if self.shifted then
+            self.reverse = not self.reverse
+            self:__Play()
+            self.shifted = false
+        else
+            local first_order, last_order
+            repeat
+                self.order = self.order + (self.reverse and -1 or 1)
+
+                first_order = self.order == 0
+                last_order = self.order == (ORDER_LIMIT - 1)
+
+                shift = (not self.reverse and last_order) or (self.reverse and first_order)
+
+                -- Play next order animations... if they exist!
+                self:__Play()
+            until self.playing or shift
+        end
+        -- Repeat the next
+        if shift and self.playing then
+            self.shifted = true
+        end
+    end
+
     -- self.finishing requires the animation to be notified first, thus this
-    -- block must be performed AFTER the animation callback
-    if signal == 'Finished' and all_finished then
+    -- block must be performed AFTER the animation callback and BEFORE the
+    -- group's callback
+    if (signal == 'Finished' and all_finished and shift) then
         if (self.finishing and bouncing) or (not bouncing) then
             group_func = self.handlers['OnFinished']
             table.insert(args, self.finishing)
         else
             group_func = self.handlers['OnLoop']
-            self.reverse = not self.reverse
 
             table.insert(args, self.reverse and 'REVERSE' or 'FORWARD')
         end
@@ -247,8 +305,10 @@ function AnimationGroup:__Notify(animation, signal)
         group_func(self, unpack(args))
     end
 
-    if (signal == 'Finished' and all_finished and
+    -- We `bounce' if the boundary orders have no animations
+    if (not self.playing and shift and
         (not self.finishing) and bouncing) then
-        self:__Play()
+        self.reverse = not self.reverse
+        self:__Notify(nil, 'Bounce')
     end
 end
