@@ -3,6 +3,9 @@
 AnimationGroup is an attempt to port animations available in the API of retail
 World of Warcraft to 1.12.
 
+#+NAME: animation_example
+[[https://github.com/martinjlowm/AnimationGroup/blob/media/animation_group.gif]]
+
 * Usage
 
 Embed the release archive into your AddOn at =libs/AnimationGroup= -or- checkout
