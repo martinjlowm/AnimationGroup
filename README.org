@@ -9,10 +9,10 @@ animations!
 #+NAME: animation_example
 [[https://github.com/martinjlowm/AnimationGroup/blob/media/animation_group.gif]]
 
-* Usage
+* Embedding
 
-Embed the release archive into your AddOn at =libs/AnimationGroup= -or- checkout
-the desired tag with git:
+To embed the library into your AddOn, extract the release archive at
+=libs/AnimationGroup= -or- checkout the desired tag with git:
 
 #+BEGIN_SRC bash
 git submodule add https://github.com/martinjlowm/AnimationGroup.git libs/AnimationGroup
