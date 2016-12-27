@@ -1,4 +1,39 @@
 #+TITLE: AnimationGroup -- Animations for WoW 1.12
 
-AnimationGroup is an attempt to port animation groups known from retail World of
-Warcraft to 1.12.
+AnimationGroup is an attempt to port animations available in the API of retail
+World of Warcraft to 1.12.
+
+* Usage
+
+Embed the release archive into your AddOn at =libs/AnimationGroup= -or- checkout
+the desired tag with git:
+
+#+BEGIN_SRC bash
+git submodule add https://github.com/martinjlowm/AnimationGroup.git libs/AnimationGroup
+cd libs/AnimationGroup
+git tag # Note tag
+git checkout [DESIRED TAG] # e.g. 1.0a
+#+END_SRC
+
+Add =libs\AnimationGroup\AnimationGroup.xml= to your AddOn's .toc file before
+your main files.
+
+* Application Programming Interface
+
+This library hooks into frames created by =CreateFrame= and adds animation
+routines to the created frame. All API calls mimic those of the retail
+implementation.
+
+Refer to http://wowwiki.wikia.com/wiki/Widget_API for the API or take a look at
+the =tests.lua= file for some examples.
+
+* Performance
+
+Animations are performed using the `OnUpdate' handler and will most likely not
+outperform the retail World of Warcraft implementation.
+
+* License
+Copyright (c) 2016 by Martin Jesper Low Madsen.
+
+AnimationGroup is licensed under the MIT License, see the LICENSE file for more
+information.
