@@ -12,14 +12,23 @@ local ORDER_LIMIT = 10
 --]]
 
 function AnimationGroup:Play()
-    self:__UpdateProperties()
+    self:__SaveProperties()
 
     self.reverse = false
     self.finishing = false
     self.order = 0
 
-    self:__Play()
-    self:__Notify(nil, 'Play')
+    repeat
+        self:__Play()
+
+        if not self.playing then
+            self.order = self.order + 1
+        end
+    until self.playing or self.order == (ORDER_LIMIT - 1)
+
+    if self.playing then
+        self:__Notify(nil, 'Play')
+    end
 end
 
 function AnimationGroup:Pause()
@@ -31,12 +40,8 @@ function AnimationGroup:Pause()
 end
 
 function AnimationGroup:Stop()
-    for _, animation in next, self.animations[self.order + 1] do
-        animation:__Stop()
-    end
-
+    self:__Stop()
     self:__Notify(nil, 'Stop')
-    self.playing = false
 end
 
 function AnimationGroup:Finish()
@@ -122,6 +127,7 @@ end
     Private
 --]]
 
+-- Make these functions local
 function AnimationGroup:__Initialize(parent)
     self.parent = parent
     self:SetParent(parent)
@@ -150,15 +156,8 @@ function AnimationGroup:__Initialize(parent)
         alpha = nil,
         width = nil,
         height = nil,
-        x = nil,
-        y = nil
+        point = {}
     }
-
-
-    self.parent:SetScript('OnSizeChanged', function()
-                              self.properties.width = self.properties.width or this:GetWidth()
-                              self.properties.height = self.properties.height or this:GetHeight()
-    end)
 
     self._SetScript = self.SetScript
     self.SetScript = self.__SetScript
@@ -172,11 +171,22 @@ function AnimationGroup:__SetScript(handler, func)
     end
 end
 
-function AnimationGroup:__UpdateProperties()
+function AnimationGroup:__SaveProperties()
     self.properties.alpha = self.parent:GetAlpha()
     self.properties.width = self.parent:GetWidth()
     self.properties.height = self.parent:GetHeight()
-    self.properties.x, self.properties.y = select(4, self.parent:GetPoint())
+    self.properties.point = { self.parent:GetPoint() }
+end
+
+function AnimationGroup:__LoadProperties()
+    self.parent:SetAlpha(self.properties.alpha)
+    self.parent:SetWidth(self.properties.width)
+    self.parent:SetHeight(self.properties.height)
+
+    local point = self.properties.point
+    if point and point[1] then
+        self.parent:SetPoint(unpack(point))
+    end
 end
 
 function AnimationGroup:__Play()
@@ -195,11 +205,22 @@ function AnimationGroup:__Play()
     self.playing = true
 end
 
+function AnimationGroup:__Stop()
+    for _, animation in next, self.animations[self.order + 1] do
+        animation:__Stop()
+    end
+
+    self:__LoadProperties()
+
+    self.playing = false
+end
+
+
 function AnimationGroup:__MoveOrder(animation, new_order)
     for order, anims in next, self.animations do
         for i, anim in next, anims do
             if anim == animation then
-                self.animations[order][i] = nil
+                table.remove(self.animations[order], i)
             end
         end
     end
@@ -208,6 +229,7 @@ function AnimationGroup:__MoveOrder(animation, new_order)
     table.insert(self.animations[new_order + 1], animation)
 end
 
+-- TODO: Check shine effect callbacks!
 function AnimationGroup:__Notify(animation, signal)
     local group_func, func
 
@@ -263,8 +285,10 @@ function AnimationGroup:__Notify(animation, signal)
     -- Try the remaining orders
     if (signal == 'Finished' and all_finished) or signal == 'Bounce' then
         if self.shifted then
-            self.reverse = not self.reverse
-            self:__Play()
+            if not self.finishing then
+                self.reverse = not self.reverse
+                self:__Play()
+            end
             self.shifted = false
         else
             local first_order, last_order
@@ -291,6 +315,8 @@ function AnimationGroup:__Notify(animation, signal)
     -- group's callback
     if (signal == 'Finished' and all_finished and shift) then
         if (self.finishing and bouncing) or (not bouncing) then
+            self:__Stop()
+
             group_func = self.handlers['OnFinished']
             table.insert(args, self.finishing)
         else

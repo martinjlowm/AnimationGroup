@@ -25,11 +25,10 @@ function Translation:OnUpdate(elapsed)
 
     local frame = self.group.parent
 
-    local properties = self.group.properties
+    local point = self.group.properties.point
 
-    local point, relative_to, relative_point, x, y = frame:GetPoint()
     frame:ClearAllPoints()
-    frame:SetPoint(point, relative_to, relative_point,
-                   properties.x + self.progress * self.offset.x,
-                   properties.y + self.progress * self.offset.y)
+    frame:SetPoint(point[1], point[2], point[3],
+                   point[4] + self.progress * self.offset.x,
+                   point[5] + self.progress * self.offset.y)
 end
