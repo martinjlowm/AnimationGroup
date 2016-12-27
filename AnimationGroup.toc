@@ -1,6 +1,6 @@
 ## Interface: 11200
 ## Title: AnimationGroup
-## Notes: Library for animation groups
+## Notes: DEV: Library for animations
 ## Author: martinjlowm
 ## Version: 1.0
 ## Dependencies: gxLuaPlus

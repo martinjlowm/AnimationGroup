@@ -1,0 +1,5 @@
+tests.lua ignore-export
+.gitattributes ignore-export
+.gitignore ignore-export
+README.org ignore-export
+AnimationGroup.toc ignore-export
