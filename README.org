@@ -3,7 +3,9 @@
 AnimationGroup is an attempt to port animations available in the API of retail
 World of Warcraft to 1.12.
 
-#+CAPTION: Backported OmniCC with animations
+OmniCC in retail uses animations and the following shows a 1.12 backport -- with
+animations!
+
 #+NAME: animation_example
 [[https://github.com/martinjlowm/AnimationGroup/blob/media/animation_group.gif]]
 
