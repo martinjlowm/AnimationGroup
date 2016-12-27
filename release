@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+TAG=$(git tag)
+export CUR_DIR="${PWD##*/}"
+export OUT_DIR=`pwd`/"$CUR_DIR"-"$TAG"
+
+rm -rf $OUT_DIR
+mkdir -p $OUT_DIR
+
+git archive --prefix "$CUR_DIR"/ "$TAG" | tar -x -C "$OUT_DIR"
+git submodule foreach 'git archive HEAD | tar -x -C "$OUT_DIR"/"$CUR_DIR"/$path'
