@@ -3,7 +3,6 @@
 ## Notes: DEV: Library for animations
 ## Author: martinjlowm
 ## Version: 1.0
-## Dependencies: gxLuaPlus
 
 libs\LibStub\LibStub.lua
 libs\Sol\Sol.lua
