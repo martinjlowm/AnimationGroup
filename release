@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-TAG=$(git tag)
+TAG=$(git describe --tags)
 export CUR_DIR="${PWD##*/}"
 OUTPUT="$CUR_DIR"-"$TAG"
 export OUT_DIR=`pwd`/"$OUTPUT"
