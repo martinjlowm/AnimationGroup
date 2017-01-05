@@ -13,7 +13,8 @@ animations!
 
 To embed the library into your AddOn, extract the release archive (available at
 the releases branch) to =libs/AnimationGroup= -or- checkout the desired tag with
-git:
+git (and make sure to initialize submodules unless you embed dependencies
+yourself):
 
 #+BEGIN_SRC bash
 git submodule add https://github.com/martinjlowm/AnimationGroup.git libs/AnimationGroup
@@ -22,8 +23,11 @@ git tag # Note tag
 git checkout [DESIRED TAG] # e.g. 1.0a
 #+END_SRC
 
-Add =libs\AnimationGroup\AnimationGroup.xml= to your AddOn's .toc file before
-your main files.
+Make sure you have embedded LibStub, Classy-1.0 and Sol, otherwise add
+=libs\AnimationGroup\libs\LibStub\LibStub.lua=,
+=libs\AnimationGroup\libs\Classy-1.0\Classy-1.0.lua=,
+=libs\AnimationGroup\libs\Sol\Sol.lua= to your AddOn's .toc file followed by
+=libs\AnimationGroup\AnimationGroup.xml= before your main files.
 
 * Application Programming Interface
 
