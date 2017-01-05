@@ -27,7 +27,7 @@ if not LibStub then return end
 local AG = LibStub:GetLibrary('AnimationGroup-1.0')
 if not AG then return end
 
-
+if AG.Alpha then return end
 local Alpha = AG:New('Alpha', AG.Animation)
 
 function Alpha:__Initialize()

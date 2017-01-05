@@ -27,6 +27,7 @@ if not LibStub then return end
 local AG = LibStub:GetLibrary('AnimationGroup-1.0')
 if not AG then return end
 
+if AG.Curves then return end
 local Curves = AG:New('Curves')
 
 local Point = {}

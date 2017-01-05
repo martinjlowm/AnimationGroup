@@ -27,6 +27,7 @@ if not LibStub then return end
 local AG = LibStub:GetLibrary('AnimationGroup-1.0')
 if not AG then return end
 
+if AG.Scale then return end
 local Scale = AG:New('Scale', AG.Animation)
 
 function Scale:__Initialize()
