@@ -11,8 +11,9 @@ animations!
 
 * Embedding
 
-To embed the library into your AddOn, extract the release archive at
-=libs/AnimationGroup= -or- checkout the desired tag with git:
+To embed the library into your AddOn, extract the release archive (available at
+the releases branch) to =libs/AnimationGroup= -or- checkout the desired tag with
+git:
 
 #+BEGIN_SRC bash
 git submodule add https://github.com/martinjlowm/AnimationGroup.git libs/AnimationGroup
@@ -42,6 +43,13 @@ of concurrent animations.
 
 I've tried to keep the `OnUpdate' handlers as small as possible and with as
 little overhead as possible.
+
+* To-do
+- Simplify callback notification system for animations and groups
+- Make as many things private (local functions) that are not meant to be public
+  e.g. `__'-prefixed functions
+- Nest object fields into an `AnimationGroup'-namespace to avoid conflicts with
+  other AddOns
 
 * License
 Copyright (c) 2016 by Martin Jesper Low Madsen.
