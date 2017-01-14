@@ -1,5 +1,6 @@
 <Ui xmlns='http://www.blizzard.com/wow/ui/'>
   <Script file='AnimationGroup.lua' />
+  <Script file='curves.lua' />
   <Script file='group.lua' />
   <Script file='animation.lua' />
   <Script file='alpha.lua' />
