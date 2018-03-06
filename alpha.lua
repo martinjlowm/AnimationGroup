@@ -46,16 +46,12 @@ end
 
 function Alpha:SetFromAlpha(alpha)
     self.alpha_from = alpha
-    self:__SetChange()
+    SetChange(self)
 end
 
 function Alpha:SetToAlpha(alpha)
     self.alpha_to = alpha
-    self:__SetChange()
-end
-
-function Alpha:__SetChange()
-    self.alpha_change = self.alpha_from - self.alpha_to
+    SetChange(self)
 end
 
 function Alpha:OnUpdate(elapsed)
@@ -66,4 +62,9 @@ function Alpha:OnUpdate(elapsed)
     local frame = self.group.parent
 
     frame:SetAlpha(properties.alpha + self.progress * self.alpha_change)
+end
+
+
+local function SetChange()
+    self.alpha_change = self.alpha_from - self.alpha_to
 end

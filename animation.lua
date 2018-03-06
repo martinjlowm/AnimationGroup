@@ -30,21 +30,16 @@ if not AG then return end
 if AG.Animation then return end
 local Animation = AG:New('Animation')
 
-local function OnUpdate(self, elapsed)
-    if self.paused then
-        return
-    end
 
-    self.time = self.time + (self.group.reverse and -elapsed or elapsed)
+--[[
+    Private
+--]]
 
-    if self.time > self.duration or (self.group.reverse and self.time < 0) then
-        self:__Finished()
-        return
-    end
-
-    -- Temporary until all animation types are implemented
-    if self.OnUpdate then
-        self:OnUpdate(elapsed)
+function Animation:__SetScript(handler, func)
+    if self.handlers[handler] then
+        self.handlers[handler] = func
+    else
+        self:_SetScript(handler, func)
     end
 end
 
@@ -54,20 +49,23 @@ end
 --]]
 
 function Animation:Play()
-    self:__Play()
-    self.group:__Notify(self, 'Play')
+    AG:Play(self)
+
+    AG:Fire(self.group, self, 'Play')
 end
 
 
 function Animation:Pause()
-    self.__Pause()
-    self.group:__Notify(self, 'Pause')
+    AG:Pause(self)
+
+    AG:Fire(self.group, self, 'Pause')
 end
 
 
 function Animation:Stop()
-    self.__Stop()
-    self.group:__Notify(self, 'Stop')
+    AG:Stop(self)
+
+    AG:Fire(self.group, self, 'Stop')
 end
 
 function Animation:IsDone()
@@ -133,11 +131,7 @@ function Animation:GetMaxFramerate()
 end
 
 function Animation:SetOrder(order)
-    assert(order <= 10, 'How much memory do you have, bro?'
-               .. ' (only 10 orders are supported)')
-    assert(order >= 0, 'Negative orders are not supported!')
-
-    self.group:__MoveOrder(self, order)
+    AG:MoveOrder(self.group, self, order)
 
     self.order = order
 end
@@ -157,46 +151,4 @@ end
 
 function Animation:GetRegionParent()
     return self.group.parent
-end
-
-
---[[
-    Private
---]]
-
-function Animation:__SetScript(handler, func)
-    if self.handlers[handler] then
-        self.handlers[handler] = func
-    else
-        self:_SetScript(handler, func)
-    end
-end
-
-function Animation:__Finished()
-    self:__Stop()
-    self.group:__Notify(self, 'Finished')
-end
-
-function Animation:__Pause()
-    self.paused = true
-end
-
-function Animation:__Play()
-    if not self.playing and self.group.parent:IsVisible() then
-        self.time = self.group.reverse and self.duration or 0
-        self.playing = true
-        self:SetScript('OnUpdate', function() OnUpdate(this, arg1) end)
-    end
-
-    self.paused = false
-end
-
-function Animation:__Stop()
-    self.time = 0
-
-    if self.OnUpdate then
-        self:SetScript('OnUpdate', nil)
-    end
-
-    self.playing = false
 end
