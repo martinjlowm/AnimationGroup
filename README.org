@@ -40,8 +40,8 @@ the =tests.lua= file for some examples.
 
 * Performance
 
-Animations are performed using the `OnUpdate' handler and are -very- unlikely to
-outperform the retail World of Warcraft implementation. This library will impact
+Animations are performed using the `OnUpdate' handler and will never perform as
+well as the retail World of Warcraft implementation. This library will impact
 your frame rate slightly and the performance loss is proportional to the number
 of concurrent animations.
 
