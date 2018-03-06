@@ -56,7 +56,7 @@ little overhead as possible.
   other AddOns
 
 * License
-Copyright (c) 2016 by Martin Jesper Low Madsen.
+Copyright (c) 2016-2018 by Martin Jesper Low Madsen.
 
 AnimationGroup is licensed under the MIT License, see the LICENSE file for more
 information.
