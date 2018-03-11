@@ -43,7 +43,7 @@ function AG:New(name, parent)
 end
 
 local function CreateAnimationGroup(self, name, inherits_from)
-    local ag = AG.AnimationGroup:Bind(CreateFrame('Frame'))
+    local ag = AG.AnimationGroup:Bind(CreateFrame('Frame', nil, self))
 
     ag:__Initialize(self)
     ag.__Initialize = nil
@@ -158,6 +158,12 @@ function AG:Pause(animation)
     animation.paused = true
 end
 
+local callback_handlers = {
+    ['Play'] = true,
+    ['Stop'] = true,
+    ['Pause'] = true,
+    ['Finished'] = true,
+}
 
 -- TODO: Check shine effect callbacks!
 function AG:Fire(group, animation, signal)
@@ -185,7 +191,7 @@ function AG:Fire(group, animation, signal)
         table.insert(args, not animation)
     end
 
-    if signal == 'Play' or signal == 'Stop' or signal == 'Pause' then
+    if callback_handlers[signal] then
         group_func = group.handlers['On' .. signal]
 
         if not animation then
@@ -193,7 +199,7 @@ function AG:Fire(group, animation, signal)
             for _, anim in next, group.animations[group.order + 1] do
                 handler_func = anim.handlers['On' .. signal]
                 if type(handler_func) == 'function' then
-                    table.insert(func, {anim, handler_func})
+                    table.insert(func, { anim, handler_func })
                 end
             end
         else
