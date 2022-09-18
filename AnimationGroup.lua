@@ -128,8 +128,11 @@ function AG:LoadProperties(group)
     group.parent:SetHeight(group.properties.height)
 
     local point = group.properties.point
-    if point and point[1] then
-        group.parent:SetPoint(unpack(point))
+        -- old implementation some times fires error =)
+	if point and type(point) == "table" then  
+		local point, region ,relativePoint, offsetX, offsetY = unpack(point)
+		region = type(region) ~= "function" and region or nil 
+        group.parent:SetPoint(point, region ,relativePoint, offsetX, offsetY)
     end
 end
 
@@ -194,7 +197,7 @@ function AG:Fire(group, animation, signal)
     if callback_handlers[signal] then
         group_func = group.handlers['On' .. signal]
 
-        if not animation then
+        if not animation and group.animations[group.order + 1] then
             local handler_func
             for _, anim in next, group.animations[group.order + 1] do
                 handler_func = anim.handlers['On' .. signal]
@@ -202,7 +205,7 @@ function AG:Fire(group, animation, signal)
                     table.insert(func, { anim, handler_func })
                 end
             end
-        else
+        elseif animation then
             func = animation.handlers['On' .. signal]
         end
     end

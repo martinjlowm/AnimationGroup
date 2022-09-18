@@ -38,6 +38,9 @@ function Scale:__Initialize()
     self.scale = {}
     self.scale.x = nil
     self.scale.y = nil
+	self.from = {}
+	self.from.x = nil
+	self.from.y = nil
 end
 
 function Scale:SetOrigin(point, offset_x, offset_y)
@@ -63,12 +66,26 @@ function Scale:GetScale()
     return scale.x, scale.y
 end
 
+function Scale:SetFromScale(x, y)
+    self.from.x = x
+    self.from.y = y
+end
+
+function Scale:GetFromScale()
+    local scale = self.from
+
+    return scale.x, scale.y
+end
+
 function Scale:OnUpdate(elapsed)
     local properties = self.group.properties
 
+	local fromx = self.from.x ~= nil and self.from.x or 1
+	local fromy = self.from.y ~= nil and self.from.y or 1	
+	
     self.progress = self.smoothing_func(self.time / self.duration).y
 
     local frame = self.group.parent
-    frame:SetWidth(properties.width + self.progress * (properties.width * self.scale.x))
-    frame:SetHeight(properties.height + self.progress * (properties.height * self.scale.y))
+    frame:SetWidth(properties.width *  (fromx + self.progress *  (self.scale.x - fromx)))
+    frame:SetHeight(properties.height * (fromy + self.progress *  (self.scale.y - fromy)))
 end

@@ -141,7 +141,8 @@ function AnimationGroup:CreateAnimation(animation_type, name, inherits_from)
         ['OnPlay'] = true,
         ['OnPaused'] = true,
         ['OnStop'] = true,
-        ['OnFinished'] = true
+        ['OnFinished'] = true,
+		['OnLoop'] = true
     }
 
     local default_smoothing = 'LINEAR'
@@ -186,7 +187,8 @@ function AnimationGroup:__Initialize(parent)
         ['OnPlay'] = true,
         ['OnPaused'] = true,
         ['OnStop'] = true,
-        ['OnFinished'] = true
+        ['OnFinished'] = true,
+		['OnLoop'] = true
     }
 
     -- The original implementation claims to support up to 100 orders... yuck!
