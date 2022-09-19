@@ -129,10 +129,10 @@ function AG:LoadProperties(group)
 
     local point = group.properties.point
         -- old implementation some times fires error =)
-	if point and type(point) == "table" then  
-		local point, region ,relativePoint, offsetX, offsetY = unpack(point)
-		region = type(region) ~= "function" and region or nil 
-        group.parent:SetPoint(point, region ,relativePoint, offsetX, offsetY)
+    if point and type(point) == "table" then  
+	      local point, relative_to, relative_point, offset_x, offset_y = unpack(point)
+	      relative_to = type(relative_to) ~= "function" and relative_to or nil 
+        group.parent:SetPoint(point, relative_to, relative_point, offset_x, offset_y)
     end
 end
 
