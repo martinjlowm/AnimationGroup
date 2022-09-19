@@ -188,7 +188,7 @@ function AnimationGroup:__Initialize(parent)
         ['OnPaused'] = true,
         ['OnStop'] = true,
         ['OnFinished'] = true,
-		['OnLoop'] = true
+        ['OnLoop'] = true
     }
 
     -- The original implementation claims to support up to 100 orders... yuck!
