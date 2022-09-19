@@ -80,8 +80,8 @@ end
 function Scale:OnUpdate(elapsed)
     local properties = self.group.properties
 
-	local fromx = self.from.x ~= nil and self.from.x or 1
-	local fromy = self.from.y ~= nil and self.from.y or 1	
+    local from_x = self.from.x
+    local from_y = self.from.y
 	
     self.progress = self.smoothing_func(self.time / self.duration).y
 
