@@ -38,9 +38,9 @@ function Scale:__Initialize()
     self.scale = {}
     self.scale.x = nil
     self.scale.y = nil
-	self.from = {}
-	self.from.x = nil
-	self.from.y = nil
+    self.from = {}
+    self.from.x = 1
+    self.from.y = 1
 end
 
 function Scale:SetOrigin(point, offset_x, offset_y)
