@@ -142,7 +142,7 @@ function AnimationGroup:CreateAnimation(animation_type, name, inherits_from)
         ['OnPaused'] = true,
         ['OnStop'] = true,
         ['OnFinished'] = true,
-		['OnLoop'] = true
+        ['OnLoop'] = true
     }
 
     local default_smoothing = 'LINEAR'
