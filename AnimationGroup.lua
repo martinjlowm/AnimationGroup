@@ -128,9 +128,9 @@ function AG:LoadProperties(group)
     group.parent:SetHeight(group.properties.height)
 
     local point = group.properties.point
-        -- old implementation some times fires error =)
     if point and type(point) == "table" and table.getn(point) > 0 then  
 	      local point, relative_to, relative_point, offset_x, offset_y = unpack(point)
+	      -- NOTE: Errors may occur if relative_to is a function. This may require more debugging to why it would be that in the first place
 	      relative_to = type(relative_to) ~= "function" and relative_to or nil 
         group.parent:SetPoint(point, relative_to, relative_point, offset_x, offset_y)
     end
