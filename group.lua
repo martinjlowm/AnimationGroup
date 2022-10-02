@@ -43,17 +43,21 @@ local function SetScript(self, handler, func)
     end
 end
 
-
 --[[
     API
 --]]
 
 function AnimationGroup:Play()
-    AG:SaveProperties(self)
-
     self.reverse = false
     self.finishing = false
     self.order = 0
+
+    for k, v in pairs(self:GetAnimations()) do
+        v:SaveProperties()
+    end
+
+
+
 
     repeat
         AG:PlayGroup(self)
@@ -128,7 +132,20 @@ function AnimationGroup:GetLoopState()
     return self.loop_state
 end
 
+function AnimationGroup:GetAnimations()
+    local animations = {}
+    for i = 0, AG.ORDER_LIMIT - 1, 1 do
+        for _, animation in next, self.animations[i + 1] or {} do
+            if animation then
+                tinsert(animations, animation)
+            end
+        end
+    end
+    return animations
+end
+
 function AnimationGroup:CreateAnimation(animation_type, name, inherits_from)
+    animation_type = string.upper(string.sub(animation_type, 1, 1)) .. string.lower(string.sub(animation_type, 2))
     local animation = AG[animation_type]:Bind(CreateFrame('Frame', name))
 
     animation.group = self
@@ -136,13 +153,17 @@ function AnimationGroup:CreateAnimation(animation_type, name, inherits_from)
     animation.type = animation_type
     animation.duration = nil
     animation.progress = nil
+    animation.smoothProgress = nil
+    animation.target = animation.group.parent
+
     animation.handlers = {
         ['OnLoad'] = true,
         ['OnPlay'] = true,
         ['OnPaused'] = true,
         ['OnStop'] = true,
         ['OnFinished'] = true,
-        ['OnLoop'] = true
+        ['OnLoop'] = true,
+        ['OnStep'] = true,
     }
 
     local default_smoothing = 'LINEAR'
@@ -157,12 +178,20 @@ function AnimationGroup:CreateAnimation(animation_type, name, inherits_from)
     animation._SetScript = animation.SetScript
     animation.SetScript = animation.__SetScript
 
+    animation.properties = {
+        alpha = nil,
+        width = nil,
+        height = nil,
+        point = {}
+    }
+
+    animation:SaveProperties()
+
     animation.order = 0
     table.insert(self.animations[animation.order + 1], animation)
 
     return animation
 end
-
 
 --[[
     Private
@@ -188,19 +217,15 @@ function AnimationGroup:__Initialize(parent)
         ['OnPaused'] = true,
         ['OnStop'] = true,
         ['OnFinished'] = true,
-        ['OnLoop'] = true
+        ['OnLoop'] = true,
+        ['OnStep'] = true,
     }
 
     -- The original implementation claims to support up to 100 orders... yuck!
     -- Lets keep it at 10 for sanity.
     self.animations = { {} }
 
-    self.properties = {
-        alpha = nil,
-        width = nil,
-        height = nil,
-        point = {}
-    }
+
 
     self._SetScript = self.SetScript
     self.SetScript = SetScript

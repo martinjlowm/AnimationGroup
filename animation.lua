@@ -69,7 +69,7 @@ function Animation:Stop()
 end
 
 function Animation:IsDone()
-    return not self.playing
+    return self.finished
 end
 
 function Animation:IsPlaying()
@@ -85,25 +85,32 @@ function Animation:IsStopped()
 end
 
 function Animation:IsDelaying()
-    return not not self.delay
+    return self.delaying
 end
 
 function Animation:GetElapsed()
-    return self.time
+    local durationTime = self.group.reverse and (self.duration - self.time) or self.time
+    local elapsed = (self.startdelayTime  +  durationTime + self.enddelayTime)
+    if self.group.reverse then
+        elapsed = self.startdelay + self.enddelay + self.duration - elapsed
+    end
+    return elapsed
 end
 
 function Animation:SetStartDelay(delay_sec)
-    self.delay = delay_sec
+    self.startdelay = delay_sec
 end
 
 function Animation:GetStartDelay()
-    return self.delay
+    return self.startdelay
 end
 
 function Animation:SetEndDelay(delay_sec)
+    self.enddelay = delay_sec
 end
 
 function Animation:GetEndDelay()
+    return self.enddelay
 end
 
 function Animation:SetDuration(duration)
@@ -118,10 +125,12 @@ function Animation:GetProgress()
     return self.progress
 end
 
-function Animation:GetSmoothProgress()
+function Animation:SetSmoothProgress(smoothProgress)
+    self.smoothProgress = smoothProgress
 end
 
-function Animation:GetProgressWithDelay()
+function Animation:GetSmoothProgress()
+    return self.smoothProgress
 end
 
 function Animation:SetMaxFramerate(framerate)
@@ -151,4 +160,13 @@ end
 
 function Animation:GetRegionParent()
     return self.group.parent
+end
+
+function Animation:SetTarget(region)
+    self.target = region
+    self:SaveProperties()
+end
+
+function Animation:GetTarget()
+    return self.target
 end

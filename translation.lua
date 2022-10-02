@@ -36,6 +36,22 @@ function Translation:__Initialize()
     self.offset.y = nil
 end
 
+function Translation:SaveProperties()
+    local point, relativeRegion, relativePoint, offsetX, offsetY = self.target:GetPoint()
+    self.properties.point = { point = point or "CENTER",
+        relativeRegion = relativeRegion or UIParent,
+        relativePoint = relativePoint or "CENTER",
+        offsetX = offsetX or 0,
+        offsetY = offsetY or 0 }
+end
+
+function Translation:LoadProperties()
+    local point = self.properties.point
+    if point and type(point) == "table" and table.getn(point) > 1 then
+        self.target:SetPoint(point.point, point.relativeRegion, point.relativePoint, point.offsetX, point.offsetY)
+    end
+end
+
 function Translation:SetOffset(x, y)
     self.offset.x = x
     self.offset.y = y
@@ -46,14 +62,14 @@ function Translation:GetOffset()
 end
 
 function Translation:OnUpdate(elapsed)
-    self.progress = self.smoothing_func(self.time / self.duration).y
+    --self.progress = self.smoothing_func(self.time / self.duration).y
 
-    local frame = self.group.parent
+    local frame = self.target
 
-    local point = self.group.properties.point
+    local point = self.properties.point
 
     frame:ClearAllPoints()
-    frame:SetPoint(point[1], point[2], point[3],
-                   point[4] + self.progress * self.offset.x,
-                   point[5] + self.progress * self.offset.y)
+    frame:SetPoint(point.point, point.relativeRegion, point.relativePoint,
+        point.offsetX + self.smoothProgress * self.offset.x,
+        point.offsetY + self.smoothProgress * self.offset.y)
 end

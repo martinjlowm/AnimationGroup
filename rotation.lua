@@ -42,26 +42,48 @@ function Rotation:__Initialize()
     self.origin.y = 0
 end
 
+function Rotation:SaveProperties()
+    self.properties.width = self.target:GetWidth()
+    self.properties.height = self.target:GetHeight()
+    local point, relativeRegion, relativePoint, offsetX, offsetY = self.target:GetPoint()
+    self.properties.point = { point = point or "CENTER",
+        relativeRegion = relativeRegion or UIParent,
+        relativePoint = relativePoint or "CENTER",
+        offsetX = offsetX or 0,
+        offsetY = offsetY or 0 }
+end
+
+function Rotation:LoadProperties()
+    if self.properties.width then self.target:SetWidth(self.properties.width) end
+    if self.properties.height then self.target:SetHeight(self.properties.height) end
+
+    local point = self.properties.point
+
+    if point and type(point) == "table" and table.getn(point) > 1 then
+        self.target:SetPoint(point.point, point.relativeRegion, point.relativePoint, point.offsetX, point.offsetY)
+    end
+end
+
 local GetRegions = function(self)
-    return { self.group.parent:GetRegions() }
+    return { self.target:GetRegions() }
 end
 
 local anchor_coords = {
-    ['TOP']         = { x =  0, y =  1 },
-    ['LEFT']        = { x = -1, y =  0 },
-    ['BOTTOM']      = { x =  0, y = -1 },
-    ['RIGHT']       = { x =  1, y =  0 },
-    ['TOPLEFT']     = { x = -1, y =  1 },
-    ['TOPRIGHT']    = { x =  1, y =  1 },
+    ['TOP']         = { x = 0, y = 1 },
+    ['LEFT']        = { x = -1, y = 0 },
+    ['BOTTOM']      = { x = 0, y = -1 },
+    ['RIGHT']       = { x = 1, y = 0 },
+    ['TOPLEFT']     = { x = -1, y = 1 },
+    ['TOPRIGHT']    = { x = 1, y = 1 },
     ['BOTTOMLEFT']  = { x = -1, y = -1 },
-    ['BOTTOMRIGHT'] = { x =  1, y = -1 },
-    ['CENTER']      = { x =  0, y =  0 }
+    ['BOTTOMRIGHT'] = { x = 1, y = -1 },
+    ['CENTER']      = { x = 0, y = 0 }
 }
 local frame_corners = {
-    [1] = { x = -1, y =  1 },   -- upper left
-    [2] = { x = -1, y = -1 },   -- lower left
-    [3] = { x =  1, y =  1 },   -- upper right
-    [4] = { x =  1, y = -1 }    -- lower right
+    [1] = { x = -1, y = 1 }, -- upper left
+    [2] = { x = -1, y = -1 }, -- lower left
+    [3] = { x = 1, y = 1 }, -- upper right
+    [4] = { x = 1, y = -1 } -- lower right
 }
 local corners = { 0, 0, 0, 0, 0, 0, 0, 0 }
 local function GetCoords(self, progress)
@@ -69,7 +91,7 @@ local function GetCoords(self, progress)
     local _cos = cos(rad)
     local _sin = sin(rad)
 
-    local properties = self.group.properties
+    local properties = self.properties
 
     local origin = {
         x = anchor_coords[self.origin.point].x +
@@ -95,10 +117,10 @@ local function GetCoords(self, progress)
 end
 
 function Rotation:OnUpdate(elapsed)
-    self.progress = self.smoothing_func(self.time / self.duration).y
+    --self.progress = self.smoothing_func(self.time / self.duration).y
 
     local regions = GetRegions(self)
-    local coords = { GetCoords(self, self.progress) }
+    local coords = { GetCoords(self, self.smoothProgress) }
     for _, region in next, regions do
         if region.GetTexture then
             region:SetTexCoord(unpack(coords))
@@ -109,20 +131,23 @@ end
 function Rotation:SetDegrees(degrees)
     self.radians = (degrees / 360) * 2 * pi
 end
+
 function Rotation:GetDegrees()
     return (self.radians / (2 * pi)) * 360
 end
+
 function Rotation:SetRadians(radians)
     self.radians = radians
 end
+
 function Rotation:GetRadians()
     return self.radians
 end
 
 function Rotation:SetOrigin(point, offsetX, offsetY)
     self.origin.point = point
-    self.origin.x = x
-    self.origin.y = y
+    self.origin.x = offsetX
+    self.origin.y = offsetY
 end
 
 function Rotation:GetOrigin()

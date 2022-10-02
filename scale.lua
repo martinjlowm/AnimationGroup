@@ -32,21 +32,33 @@ local Scale = AG:New('Scale', AG.Animation)
 
 function Scale:__Initialize()
     self.origin = {}
-    self.origin.point = nil
-    self.origin.x = nil
-    self.origin.y = nil
+    self.origin.point = "CENTER"
+    self.origin.x = 0
+    self.origin.y = 0
     self.scale = {}
-    self.scale.x = nil
-    self.scale.y = nil
+    self.scale.x = 0
+    self.scale.y = 0
     self.from = {}
-    self.from.x = 1
-    self.from.y = 1
+    self.from.x = 0
+    self.from.y = 0
+end
+
+function Scale:SaveProperties()
+    self.properties.width = self.target:GetWidth()
+    self.properties.height = self.target:GetHeight()
+    --printT({"SAVE", self.properties })
+end
+
+function Scale:LoadProperties()
+    if self.properties.width then self.target:SetWidth(self.properties.width) end
+    if self.properties.height then self.target:SetHeight(self.properties.height) end
+    --printT({"LOAD",self.properties})
 end
 
 function Scale:SetOrigin(point, offset_x, offset_y)
     self.origin.point = point
-    self.origin.x = x
-    self.origin.y = y
+    self.origin.x = offset_x
+    self.origin.y = offset_y
 end
 
 function Scale:GetOrigin()
@@ -56,6 +68,11 @@ function Scale:GetOrigin()
 end
 
 function Scale:SetScale(x, y)
+    self.scale.x = x
+    self.scale.y = y
+end
+
+function Scale:SetToScale(x, y)
     self.scale.x = x
     self.scale.y = y
 end
@@ -78,14 +95,14 @@ function Scale:GetFromScale()
 end
 
 function Scale:OnUpdate(elapsed)
-    local properties = self.group.properties
+    local properties = self.properties
 
     local from_x = self.from.x
     local from_y = self.from.y
-	
-    self.progress = self.smoothing_func(self.time / self.duration).y
 
-    local frame = self.group.parent
-    frame:SetWidth(properties.width * (from_x + self.progress * (self.scale.x - from_x)))
-    frame:SetHeight(properties.height * (from_y + self.progress * (self.scale.y - from_y)))
+    -- self.progress = self.smoothing_func(self.time / self.duration).y
+
+    local frame = self.target
+    frame:SetWidth(properties.width * (from_x + self.smoothProgress * (self.scale.x - from_x)))
+    frame:SetHeight(properties.height * (from_y + self.smoothProgress * (self.scale.y - from_y)))
 end
