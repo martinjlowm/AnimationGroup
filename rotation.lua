@@ -58,11 +58,8 @@ function Rotation:LoadProperties()
     if self.properties.height then self.target:SetHeight(self.properties.height) end
 
     local point = self.properties.point
-
-    if point and type(point) == "table" and table.getn(point) > 1 then
-        self.target:SetPoint(point.point, point.relativeRegion, point.relativePoint, point.offsetX, point.offsetY)
+    self.target:SetPoint(point.point, point.relativeRegion, point.relativePoint, point.offsetX, point.offsetY)
     end
-end
 
 local GetRegions = function(self)
     return { self.target:GetRegions() }

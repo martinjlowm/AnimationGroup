@@ -47,9 +47,7 @@ end
 
 function Translation:LoadProperties()
     local point = self.properties.point
-    if point and type(point) == "table" and table.getn(point) > 1 then
-        self.target:SetPoint(point.point, point.relativeRegion, point.relativePoint, point.offsetX, point.offsetY)
-    end
+    self.target:SetPoint(point.point, point.relativeRegion, point.relativePoint, point.offsetX, point.offsetY)
 end
 
 function Translation:SetOffset(x, y)
