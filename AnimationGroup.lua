@@ -130,7 +130,7 @@ function AG:StopGroup(group)
             AG:Stop(animation)
         end
     end
-    AG:LoadProperties(group)
+    self:LoadProperties(group)
     group.playing = false
 end
 
