@@ -46,13 +46,11 @@ end
 function Scale:SaveProperties()
     self.properties.width = self.target:GetWidth()
     self.properties.height = self.target:GetHeight()
-    --printT({"SAVE", self.properties })
 end
 
 function Scale:LoadProperties()
     if self.properties.width then self.target:SetWidth(self.properties.width) end
     if self.properties.height then self.target:SetHeight(self.properties.height) end
-    --printT({"LOAD",self.properties})
 end
 
 function Scale:SetOrigin(point, offset_x, offset_y)

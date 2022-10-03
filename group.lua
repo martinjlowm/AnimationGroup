@@ -48,16 +48,11 @@ end
 --]]
 
 function AnimationGroup:Play()
+    AG:SaveProperties(self)
+
     self.reverse = false
     self.finishing = false
     self.order = 0
-
-    for k, v in pairs(self:GetAnimations()) do
-        v:SaveProperties()
-    end
-
-
-
 
     repeat
         AG:PlayGroup(self)
@@ -162,7 +157,6 @@ function AnimationGroup:CreateAnimation(animation_type, name, inherits_from)
         ['OnPaused'] = true,
         ['OnStop'] = true,
         ['OnFinished'] = true,
-        ['OnLoop'] = true,
         ['OnStep'] = true,
     }
 
@@ -218,14 +212,11 @@ function AnimationGroup:__Initialize(parent)
         ['OnStop'] = true,
         ['OnFinished'] = true,
         ['OnLoop'] = true,
-        ['OnStep'] = true,
     }
 
     -- The original implementation claims to support up to 100 orders... yuck!
     -- Lets keep it at 10 for sanity.
     self.animations = { {} }
-
-
 
     self._SetScript = self.SetScript
     self.SetScript = SetScript

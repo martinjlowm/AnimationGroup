@@ -130,8 +130,20 @@ function AG:StopGroup(group)
             AG:Stop(animation)
         end
     end
-
+    AG:LoadProperties(group)
     group.playing = false
+end
+
+function AG:SaveProperties(group)
+    for k, v in pairs(group:GetAnimations()) do
+        v:SaveProperties()
+    end
+end
+
+function AG:LoadProperties(group)
+    for k, v in pairs(group:GetAnimations()) do
+        v:LoadProperties()
+    end
 end
 
 function AG:Stop(animation)
@@ -146,7 +158,6 @@ end
 
 function AG:Play(animation)
     if not animation.playing and animation.target:IsVisible() then
-        --   printT({"AG:PLAY", animation:GetName()})
         animation.time = animation.group.reverse and animation.duration or 0
         animation.startdelayTime = 0
         animation.enddelayTime = 0
@@ -263,10 +274,6 @@ function AG:Fire(group, animation, signal)
     if (signal == 'Finished' and all_finished and shift) then
         if (group.finishing and (bouncing or repeating)) or not (bouncing or repeating) then
             AG:StopGroup(group)
-            for k, v in pairs(group:GetAnimations()) do
-                v:LoadProperties()
-            end
-            --printT({"CallBack", 'OnFinished'})
             group_func = group.handlers['OnFinished']
             table.insert(args, group.finishing)
         end
