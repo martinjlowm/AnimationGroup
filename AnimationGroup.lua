@@ -24,7 +24,7 @@
 
 if not LibStub then return end
 
-local MAJOR_VERSION, MINOR_VERSION = 'AnimationGroup-1.0', '1520787712-0b498e1'
+local MAJOR_VERSION, MINOR_VERSION = 'AnimationGroup-1.0', '1520787716-0b498e1'
 
 -- Probably not a release
 if not string.find(MINOR_VERSION, '%d+') then MINOR_VERSION = 0 end
@@ -93,8 +93,8 @@ local function OnUpdate(self, elapsed)
         end
 
     end
-    if type(self.handlers["OnStep"]) == 'function' then
-        self.handlers["OnStep"](self, elapsed)
+    if type(self.handlers["OnUpdate"]) == 'function' then
+        self.handlers["OnUpdate"](self, elapsed)
     end
 
     -- Temporary until all animation types are implemented
@@ -150,7 +150,7 @@ function AG:Stop(animation)
     animation.time = 0
 
     if animation.OnUpdate then
-        animation:SetScript('OnUpdate', nil)
+        animation:_SetScript('OnUpdate', nil)
     end
 
     animation.playing = false
@@ -164,7 +164,7 @@ function AG:Play(animation)
         animation.progress = 0
         animation.smoothProgress = 0
         animation.playing = true
-        animation:SetScript('OnUpdate', function() OnUpdate(this, arg1) end)
+        animation:_SetScript('OnUpdate', function() OnUpdate(this, arg1) end)
     end
 
     animation.paused = false
