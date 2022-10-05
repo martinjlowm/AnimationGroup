@@ -59,7 +59,7 @@ function Rotation:LoadProperties()
 
     local point = self.properties.point
     self.target:SetPoint(point.point, point.relativeRegion, point.relativePoint, point.offsetX, point.offsetY)
-    end
+end
 
 local GetRegions = function(self)
     return { self.target:GetRegions() }

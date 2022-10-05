@@ -43,7 +43,6 @@ function Animation:__SetScript(handler, func)
     end
 end
 
-
 --[[
     API
 --]]
@@ -54,13 +53,11 @@ function Animation:Play()
     AG:Fire(self.group, self, 'Play')
 end
 
-
 function Animation:Pause()
     AG:Pause(self)
 
     AG:Fire(self.group, self, 'Pause')
 end
-
 
 function Animation:Stop()
     AG:Stop(self)
@@ -90,7 +87,7 @@ end
 
 function Animation:GetElapsed()
     local durationTime = self.group.reverse and (self.duration - self.time) or self.time
-    local elapsed = (self.startdelayTime  +  durationTime + self.enddelayTime)
+    local elapsed = (self.startdelayTime + durationTime + self.enddelayTime)
     if self.group.reverse then
         elapsed = self.startdelay + self.enddelay + self.duration - elapsed
     end
