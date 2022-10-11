@@ -130,9 +130,11 @@ end
 function AnimationGroup:GetAnimations()
     local animations = {}
     for i = 0, AG.ORDER_LIMIT - 1, 1 do
-        for _, animation in next, self.animations[i + 1] or {} do
-            if animation then
-                tinsert(animations, animation)
+        if self.animations[i + 1] then
+            for _, animation in next, self.animations[i + 1] do
+                if animation then
+                    tinsert(animations, animation)
+                end
             end
         end
     end

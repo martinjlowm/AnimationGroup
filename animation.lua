@@ -87,27 +87,27 @@ end
 
 function Animation:GetElapsed()
     local durationTime = self.group.reverse and (self.duration - self.time) or self.time
-    local elapsed = (self.startdelayTime + durationTime + self.enddelayTime)
+    local elapsed = (self.startDelayTime + durationTime + self.endDelayTime)
     if self.group.reverse then
-        elapsed = self.startdelay + self.enddelay + self.duration - elapsed
+        elapsed = self.startDelay + self.endDelay + self.duration - elapsed
     end
     return elapsed
 end
 
 function Animation:SetStartDelay(delay_sec)
-    self.startdelay = delay_sec
+    self.startDelay = delay_sec
 end
 
 function Animation:GetStartDelay()
-    return self.startdelay
+    return self.startDelay
 end
 
 function Animation:SetEndDelay(delay_sec)
-    self.enddelay = delay_sec
+    self.endDelay = delay_sec
 end
 
 function Animation:GetEndDelay()
-    return self.enddelay
+    return self.endDelay
 end
 
 function Animation:SetDuration(duration)

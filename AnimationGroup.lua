@@ -66,10 +66,10 @@ local function OnUpdate(self, elapsed)
     end
     self.delaying = true
 
-    if not self.group.reverse and self.startdelay and self.startdelayTime < self.startdelay then
-        self.startdelayTime = self.startdelayTime + elapsed
-    elseif self.group.reverse and self.enddelay and self.enddelayTime < self.enddelay then
-        self.enddelayTime = self.enddelayTime + elapsed
+    if not self.group.reverse and self.startDelay and self.startDelayTime < self.startDelay then
+        self.startDelayTime = self.startDelayTime + elapsed
+    elseif self.group.reverse and self.endDelay and self.endDelayTime < self.endDelay then
+        self.endDelayTime = self.endDelayTime + elapsed
     elseif (not self.group.reverse and self.time < self.duration) or (self.group.reverse and self.time > 0) then
         self.time = self.time + (self.group.reverse and -elapsed or elapsed)
         self.delaying = false
@@ -80,11 +80,11 @@ local function OnUpdate(self, elapsed)
     end
 
     if self.time > self.duration or (self.group.reverse and self.time < 0) then
-        if self.group.reverse and self.startdelay and self.startdelayTime < self.startdelay then
-            self.startdelayTime = self.startdelayTime + elapsed
+        if self.group.reverse and self.startDelay and self.startDelayTime < self.startDelay then
+            self.startDelayTime = self.startDelayTime + elapsed
             self.delaying = true
-        elseif not self.group.reverse and self.enddelay and self.enddelayTime < self.enddelay then
-            self.enddelayTime = self.enddelayTime + elapsed
+        elseif not self.group.reverse and self.endDelay and self.endDelayTime < self.endDelay then
+            self.endDelayTime = self.endDelayTime + elapsed
             self.delaying = true
         else
             AG:Stop(self)
@@ -159,8 +159,8 @@ end
 function AG:Play(animation)
     if not animation.playing and animation.target:IsVisible() then
         animation.time = animation.group.reverse and animation.duration or 0
-        animation.startdelayTime = 0
-        animation.enddelayTime = 0
+        animation.startDelayTime = 0
+        animation.endDelayTime = 0
         animation.progress = 0
         animation.smoothProgress = 0
         animation.playing = true
