@@ -64,13 +64,18 @@ local function OnUpdate(self, elapsed)
     if self.paused then
         return
     end
+    local reverse = self.group.reverse
+    local in_start_delay = self.startDelay and self.startDelayTime < self.startDelay
+    local in_end_delay = self.endDelay and self.endDelayTime < self.endDelay
+    local in_progress = not reverse and self.time < self.duration
+    local in_progress_revers = reverse and 0 < self.time
     self.delaying = true
 
-    if not self.group.reverse and self.startDelay and self.startDelayTime < self.startDelay then
+    if not reverse and in_start_delay then
         self.startDelayTime = self.startDelayTime + elapsed
-    elseif self.group.reverse and self.endDelay and self.endDelayTime < self.endDelay then
+    elseif reverse and in_end_delay then
         self.endDelayTime = self.endDelayTime + elapsed
-    elseif (not self.group.reverse and self.time < self.duration) or (self.group.reverse and self.time > 0) then
+    elseif (in_progress) or (in_progress_revers) then
         self.time = self.time + (self.group.reverse and -elapsed or elapsed)
         self.delaying = false
         self.progress = self.time / self.duration
@@ -80,10 +85,10 @@ local function OnUpdate(self, elapsed)
     end
 
     if self.time > self.duration or (self.group.reverse and self.time < 0) then
-        if self.group.reverse and self.startDelay and self.startDelayTime < self.startDelay then
+        if reverse and in_start_delay then
             self.startDelayTime = self.startDelayTime + elapsed
             self.delaying = true
-        elseif not self.group.reverse and self.endDelay and self.endDelayTime < self.endDelay then
+        elseif not reverse and in_end_delay then
             self.endDelayTime = self.endDelayTime + elapsed
             self.delaying = true
         else
@@ -93,11 +98,12 @@ local function OnUpdate(self, elapsed)
         end
 
     end
+    -- Calling user's callback_handlers
     if type(self.handlers["OnUpdate"]) == 'function' then
         self.handlers["OnUpdate"](self, elapsed)
     end
 
-    -- Temporary until all animation types are implemented
+    -- Calling animations OnUpdate
     if not self.delaying and self.OnUpdate then
         self:OnUpdate(elapsed)
     end
