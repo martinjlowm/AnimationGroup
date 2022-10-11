@@ -24,7 +24,7 @@
 
 if not LibStub then return end
 
-local MAJOR_VERSION, MINOR_VERSION = 'AnimationGroup-1.0', '1520787716-0b498e1'
+local MAJOR_VERSION, MINOR_VERSION = 'AnimationGroup-1.0', '$Format:%ct-%h$'
 
 -- Probably not a release
 if not string.find(MINOR_VERSION, '%d+') then MINOR_VERSION = 0 end
