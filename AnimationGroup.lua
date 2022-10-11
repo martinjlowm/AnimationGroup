@@ -239,7 +239,7 @@ function AG:Fire(group, animation, signal)
     if (signal == 'Finished' and all_finished) or signal == 'Bounce' then
         if group.shifted then
             if not group.finishing then
-                group.reverse = bouncing and (not group.reverse) or false
+                group.reverse = bouncing and (not group.reverse)
                 AG:PlayGroup(group)
                 group_func = group.handlers['OnLoop']
                 table.insert(args, group.reverse and 'REVERSE' or 'FORWARD')
