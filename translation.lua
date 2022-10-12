@@ -60,8 +60,6 @@ function Translation:GetOffset()
 end
 
 function Translation:OnUpdate(elapsed)
-    --self.progress = self.smoothing_func(self.time / self.duration).y
-
     local frame = self.target
 
     local point = self.properties.point

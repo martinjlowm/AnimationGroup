@@ -98,8 +98,6 @@ function Scale:OnUpdate(elapsed)
     local from_x = self.from.x
     local from_y = self.from.y
 
-    -- self.progress = self.smoothing_func(self.time / self.duration).y
-
     local frame = self.target
     frame:SetWidth(properties.width * (from_x + self.smoothProgress * (self.scale.x - from_x)))
     frame:SetHeight(properties.height * (from_y + self.smoothProgress * (self.scale.y - from_y)))

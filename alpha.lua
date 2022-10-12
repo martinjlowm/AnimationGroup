@@ -69,8 +69,6 @@ do
 end
 
 function Alpha:OnUpdate(elapsed)
-    --self.progress = self.smoothing_func(self.time / self.duration).y
-
     local frame = self.target
 
     frame:SetAlpha(self.alpha_from + self.smoothProgress * self.alpha_change)

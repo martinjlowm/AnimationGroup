@@ -82,7 +82,7 @@ function Animation:IsStopped()
 end
 
 function Animation:IsDelaying()
-    return self.delaying
+    return self.delayed
 end
 
 function Animation:GetElapsed()

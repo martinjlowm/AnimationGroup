@@ -67,36 +67,31 @@ local function OnUpdate(self, elapsed)
     local in_reverse = self.group.reverse
     local is_start_delayed = self.startDelay and self.startDelayTime < self.startDelay
     local is_end_delayed = self.endDelay and self.endDelayTime < self.endDelay
-    local in_progress = not reverse and self.time < self.duration
-    local in_progress_reverse = reverse and 0 < self.time
-    self.delaying = true
+    local in_progress = not in_reverse and self.time < self.duration
+    local in_progress_reverse = in_reverse and 0 < self.time
+    local is_animation_complete = self.duration < self.time or (in_reverse and self.time < 0)
 
-    if not reverse and in_start_delay then
+    self.delayed = true
+
+    if (not in_reverse and is_start_delayed) or (is_animation_complete and in_reverse and is_start_delayed) then
         self.startDelayTime = self.startDelayTime + elapsed
-    elseif reverse and in_end_delay then
+    elseif (in_reverse and is_end_delayed) or (is_animation_complete and not in_reverse and is_end_delayed) then
         self.endDelayTime = self.endDelayTime + elapsed
     elseif in_progress or in_progress_reverse then
         self.time = self.time + (self.group.reverse and -elapsed or elapsed)
-        self.delaying = false
         self.progress = self.time / self.duration
         self.progress = self.progress < 0 and 0 or self.progress
         self.progress = self.progress > 1 and 1 or self.progress
         self.smoothProgress = self.smoothing_func(self.progress).y
+        self.delayed = false
     end
 
-    if self.time > self.duration or (self.group.reverse and self.time < 0) then
-        if reverse and in_start_delay then
-            self.startDelayTime = self.startDelayTime + elapsed
-            self.delaying = true
-        elseif not reverse and in_end_delay then
-            self.endDelayTime = self.endDelayTime + elapsed
-            self.delaying = true
-        else
+    is_animation_complete = self.duration < self.time or (in_reverse and self.time < 0)
+    if is_animation_complete and not( in_reverse and is_start_delayed) 
+        and not (not in_reverse and is_end_delayed) then
             AG:Stop(self)
             AG:Fire(self.group, self, 'Finished')
             return
-        end
-
     end
     -- Calling user's callback_handlers
     if type(self.handlers["OnUpdate"]) == 'function' then
@@ -104,7 +99,7 @@ local function OnUpdate(self, elapsed)
     end
 
     -- Calling animations OnUpdate
-    if not self.delaying and self.OnUpdate then
+    if not self.delayed and self.OnUpdate then
         self:OnUpdate(elapsed)
     end
 end
@@ -293,11 +288,9 @@ function AG:Fire(group, animation, signal)
     -- We `bounce' if the boundary orders have no animations
     if (signal == 'Finished' and not group.playing and shift and
         (not group.finishing) and (bouncing or repeating)) then
-        --group.shifted = true
         if repeating then
             group.order = -1
         else
-            --group.order = group.order - (group.reverse and -1 or 1)
             group.reverse = not group.reverse
         end
         group_func = group.handlers['OnLoop']

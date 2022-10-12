@@ -114,8 +114,6 @@ local function GetCoords(self, progress)
 end
 
 function Rotation:OnUpdate(elapsed)
-    --self.progress = self.smoothing_func(self.time / self.duration).y
-
     local regions = GetRegions(self)
     local coords = { GetCoords(self, self.smoothProgress) }
     for _, region in next, regions do
