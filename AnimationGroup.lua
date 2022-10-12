@@ -64,18 +64,18 @@ local function OnUpdate(self, elapsed)
     if self.paused then
         return
     end
-    local reverse = self.group.reverse
-    local in_start_delay = self.startDelay and self.startDelayTime < self.startDelay
-    local in_end_delay = self.endDelay and self.endDelayTime < self.endDelay
+    local in_reverse = self.group.reverse
+    local is_start_delayed = self.startDelay and self.startDelayTime < self.startDelay
+    local is_end_delayed = self.endDelay and self.endDelayTime < self.endDelay
     local in_progress = not reverse and self.time < self.duration
-    local in_progress_revers = reverse and 0 < self.time
+    local in_progress_reverse = reverse and 0 < self.time
     self.delaying = true
 
     if not reverse and in_start_delay then
         self.startDelayTime = self.startDelayTime + elapsed
     elseif reverse and in_end_delay then
         self.endDelayTime = self.endDelayTime + elapsed
-    elseif (in_progress) or (in_progress_revers) then
+    elseif in_progress or in_progress_reverse then
         self.time = self.time + (self.group.reverse and -elapsed or elapsed)
         self.delaying = false
         self.progress = self.time / self.duration
