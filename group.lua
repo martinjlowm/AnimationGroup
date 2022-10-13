@@ -148,9 +148,12 @@ function AnimationGroup:CreateAnimation(animation_type, name, inherits_from)
     animation.group = self
     animation:SetParent(self)
     animation.type = animation_type
-    animation.duration = nil
-    animation.progress = nil
-    animation.smoothProgress = nil
+    animation.duration = 0
+    animation.progress = 0
+    animation.smoothProgress = 0
+    animation.startDelay = 0
+    animation.endDelay = 0
+    animation.totalTime = 0
     animation.target = animation.group.parent
 
     animation.handlers = {

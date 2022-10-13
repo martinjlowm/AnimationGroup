@@ -86,12 +86,7 @@ function Animation:IsDelaying()
 end
 
 function Animation:GetElapsed()
-    local durationTime = self.group.reverse and (self.duration - self.time) or self.time
-    local elapsed = (self.startDelayTime + durationTime + self.endDelayTime)
-    if self.group.reverse then
-        elapsed = self.startDelay + self.endDelay + self.duration - elapsed
-    end
-    return elapsed
+    return self.time < 0 and 0 or self.totalTime < self.time and self.totalTime or self.time
 end
 
 function Animation:SetStartDelay(delay_sec)

@@ -65,43 +65,42 @@ local function OnUpdate(self, elapsed)
         return
     end
     local in_reverse = self.group.reverse
-    local is_start_delayed = self.startDelay and self.startDelayTime < self.startDelay
-    local is_end_delayed = self.endDelay and self.endDelayTime < self.endDelay
-    local in_progress = not in_reverse and self.time < self.duration
-    local in_progress_reverse = in_reverse and 0 < self.time
-    local is_animation_complete = self.duration < self.time or (in_reverse and self.time < 0)
 
-    self.delayed = true
+    self.time = self.time + (in_reverse and -elapsed or elapsed)
+    local animation_time = self.time - self.startDelay
 
-    if (not in_reverse and is_start_delayed) or (is_animation_complete and in_reverse and is_start_delayed) then
-        self.startDelayTime = self.startDelayTime + elapsed
-    elseif (in_reverse and is_end_delayed) or (is_animation_complete and not in_reverse and is_end_delayed) then
-        self.endDelayTime = self.endDelayTime + elapsed
-    elseif in_progress or in_progress_reverse then
-        self.time = self.time + (self.group.reverse and -elapsed or elapsed)
-        self.progress = self.time / self.duration
+    self.progress = animation_time / self.duration
+    -- Fast min/max to ensure progress is bound within `0 < self.progress < 1'
         self.progress = self.progress < 0 and 0 or self.progress
         self.progress = self.progress > 1 and 1 or self.progress
-        self.smoothProgress = self.smoothing_func(self.progress).y
-        self.delayed = false
-    end
 
-    is_animation_complete = self.duration < self.time or (in_reverse and self.time < 0)
-    if is_animation_complete and not( in_reverse and is_start_delayed) 
-        and not (not in_reverse and is_end_delayed) then
-            AG:Stop(self)
-            AG:Fire(self.group, self, 'Finished')
-            return
-    end
+    -- These represent whether the time "pointer" is in the left- or the right delay part, at which it is not animating, but should remain visible.
+    local is_delayed_start = self.time < self.startDelay and 0 < self.time
+    local is_delayed_end = (self.totalTime - self.endDelay) < self.time and self.time < self.totalTime
+
+    local is_animation_complete = (in_reverse and self.time < 0) or self.totalTime < self.time
+    self.delayed = is_delayed_start or is_delayed_end
+
+     -- We should calculate smoothProgress before Users's callback_handlers
+        self.smoothProgress = self.smoothing_func(self.progress).y
+
     -- Calling user's callback_handlers
     if type(self.handlers["OnUpdate"]) == 'function' then
         self.handlers["OnUpdate"](self, elapsed)
     end
 
     -- Calling animations OnUpdate
-    if not self.delayed and self.OnUpdate then
+    if self.OnUpdate then
         self:OnUpdate(elapsed)
     end
+
+    -- Stop animation after last update
+    if is_animation_complete then
+        AG:Stop(self)
+        AG:Fire(self.group, self, 'Finished')
+        return
+    end
+
 end
 
 --[[
@@ -159,9 +158,8 @@ end
 
 function AG:Play(animation)
     if not animation.playing and animation.target:IsVisible() then
-        animation.time = animation.group.reverse and animation.duration or 0
-        animation.startDelayTime = 0
-        animation.endDelayTime = 0
+        animation.totalTime = animation.startDelay + animation.duration + animation.endDelay
+        animation.time = animation.group.reverse and animation.totalTime or 0
         animation.progress = 0
         animation.smoothProgress = 0
         animation.playing = true
