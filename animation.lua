@@ -43,7 +43,6 @@ function Animation:__SetScript(handler, func)
     end
 end
 
-
 --[[
     API
 --]]
@@ -54,13 +53,11 @@ function Animation:Play()
     AG:Fire(self.group, self, 'Play')
 end
 
-
 function Animation:Pause()
     AG:Pause(self)
 
     AG:Fire(self.group, self, 'Pause')
 end
-
 
 function Animation:Stop()
     AG:Stop(self)
@@ -69,7 +66,7 @@ function Animation:Stop()
 end
 
 function Animation:IsDone()
-    return not self.playing
+    return self.finished
 end
 
 function Animation:IsPlaying()
@@ -85,25 +82,27 @@ function Animation:IsStopped()
 end
 
 function Animation:IsDelaying()
-    return not not self.delay
+    return self.delayed
 end
 
 function Animation:GetElapsed()
-    return self.time
+    return self.time < 0 and 0 or self.totalTime < self.time and self.totalTime or self.time
 end
 
 function Animation:SetStartDelay(delay_sec)
-    self.delay = delay_sec
+    self.startDelay = delay_sec
 end
 
 function Animation:GetStartDelay()
-    return self.delay
+    return self.startDelay
 end
 
 function Animation:SetEndDelay(delay_sec)
+    self.endDelay = delay_sec
 end
 
 function Animation:GetEndDelay()
+    return self.endDelay
 end
 
 function Animation:SetDuration(duration)
@@ -118,10 +117,12 @@ function Animation:GetProgress()
     return self.progress
 end
 
-function Animation:GetSmoothProgress()
+function Animation:SetSmoothProgress(smoothProgress)
+    self.smoothProgress = smoothProgress
 end
 
-function Animation:GetProgressWithDelay()
+function Animation:GetSmoothProgress()
+    return self.smoothProgress
 end
 
 function Animation:SetMaxFramerate(framerate)
@@ -151,4 +152,13 @@ end
 
 function Animation:GetRegionParent()
     return self.group.parent
+end
+
+function Animation:SetTarget(region)
+    self.target = region
+    self:SaveProperties()
+end
+
+function Animation:GetTarget()
+    return self.target
 end

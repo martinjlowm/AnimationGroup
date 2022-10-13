@@ -31,9 +31,17 @@ if AG.Alpha then return end
 local Alpha = AG:New('Alpha', AG.Animation)
 
 function Alpha:__Initialize()
-    self.alpha_change = nil
-    self.alpha_from = 1
+    self.alpha_change = 0
+    self.alpha_from = 0
     self.alpha_to = 0
+end
+
+function Alpha:SaveProperties()
+    self.properties.alpha = self.target:GetAlpha()
+end
+
+function Alpha:LoadProperties()
+    if self.properties.alpha then self.target:SetAlpha(self.properties.alpha) end
 end
 
 function Alpha:SetChange(change)
@@ -44,27 +52,24 @@ function Alpha:GetChange()
     return self.alpha_change
 end
 
-function Alpha:SetFromAlpha(alpha)
-    self.alpha_from = alpha
-    SetChange(self)
-end
+do
+    local function SetChange(self)
+        self.alpha_change = self.alpha_to - self.alpha_from
+    end
 
-function Alpha:SetToAlpha(alpha)
-    self.alpha_to = alpha
-    SetChange(self)
+    function Alpha:SetFromAlpha(alpha)
+        self.alpha_from = alpha
+        SetChange(self)
+    end
+
+    function Alpha:SetToAlpha(alpha)
+        self.alpha_to = alpha
+        SetChange(self)
+    end
 end
 
 function Alpha:OnUpdate(elapsed)
-    local properties = self.group.properties
+    local frame = self.target
 
-    self.progress = self.smoothing_func(self.time / self.duration).y
-
-    local frame = self.group.parent
-
-    frame:SetAlpha(properties.alpha + self.progress * self.alpha_change)
-end
-
-
-local function SetChange()
-    self.alpha_change = self.alpha_from - self.alpha_to
+    frame:SetAlpha(self.alpha_from + self.smoothProgress * self.alpha_change)
 end

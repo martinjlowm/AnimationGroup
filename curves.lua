@@ -42,24 +42,23 @@ end
 
 local mt = {
     __add = Point.Add,
-    __mul = Point.Multiply }
+    __mul = Point.Multiply
+}
 
 function Point:New(x, y)
-    return setmetatable({x = x, y = y}, mt)
+    return setmetatable({ x = x, y = y }, mt)
 end
 
 local function QuadraticBezier(p_0, p_1, p_2)
     return function(t)
-        return
-            (1 - t) * ((1 - t) * p_0 + t * p_1) +
+        return (1 - t) * ((1 - t) * p_0 + t * p_1) +
             t * ((1 - t) * p_1 + t * p_2)
     end
 end
 
 local function CubicBezier(p_0, p_1, p_2, p_3)
     return function(t)
-        return
-            (1 - t) * QuadraticBezier(p_0, p_1, p_2)(t) +
+        return (1 - t) * QuadraticBezier(p_0, p_1, p_2)(t) +
             t * QuadraticBezier(p_1, p_2, p_3)(t)
     end
 end
@@ -92,7 +91,7 @@ local CubicBezierEaseInOut = function()
 end
 
 local Linear = function(t)
-    return {x = 0, y = t}
+    return { x = 0, y = t }
 end
 
 Curves.curves = {
@@ -103,4 +102,4 @@ Curves.curves = {
     ['LINEAR'] = Linear
 }
 
-setmetatable(Curves, {__index = Curves.curves })
+setmetatable(Curves, { __index = Curves.curves })

@@ -39,8 +39,8 @@ end
 -- Adds a new path control point.
 function Path:CreateControlPoint(name, template, order)
     local control_point = { name = name,
-                            template = template,
-                            order = order }
+        template = template,
+        order = order }
     table.insert(self.control_points, control_points)
 end
 
